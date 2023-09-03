@@ -551,6 +551,8 @@ public class StandardService extends LifecycleMBeanBase implements Service {
         // Initialize our defined Connectors
         synchronized (connectorsLock) {
             for (Connector connector : connectors) {
+                // 初始化connector  xml中<Connector port="8888" protocol="HTTP/1.1" connectionTimeout="20000" redirectPort="8443" maxParameterCount="1000" />
+                // 包括bind端口
                 connector.init();
             }
         }

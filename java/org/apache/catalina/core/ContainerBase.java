@@ -863,6 +863,7 @@ public abstract class ContainerBase extends LifecycleMBeanBase implements Contai
         Container[] children = findChildren();
         List<Future<Void>> results = new ArrayList<>(children.length);
         for (Container child : children) {
+            // 默认是以main线程来启动的
             results.add(startStopExecutor.submit(new StartChild(child)));
         }
 
@@ -1280,6 +1281,7 @@ public abstract class ContainerBase extends LifecycleMBeanBase implements Contai
 
         @Override
         public void run() {
+            // 支持热部署
             processChildren(ContainerBase.this);
         }
 

@@ -1,0 +1,2 @@
+Q:example应用监听器报错问题
+A:把webapps/examples/WEB-INF/classes目录用IDEA "Mark Directory As"-Source Root
