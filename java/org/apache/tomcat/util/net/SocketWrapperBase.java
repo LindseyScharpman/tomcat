@@ -541,7 +541,7 @@ public abstract class SocketWrapperBase<E> {
          *   use of the non-blocking write buffer
          */
         if (block) {
-            writeBlocking(from);
+            writeBlocking(from); // 阻塞写
         } else {
             writeNonBlocking(from);
         }
@@ -720,7 +720,7 @@ public abstract class SocketWrapperBase<E> {
         boolean result = false;
         if (block) {
             // A blocking flush will always empty the buffer.
-            flushBlocking();
+            flushBlocking(); // 阻塞flush
         } else {
             result = flushNonBlocking();
         }

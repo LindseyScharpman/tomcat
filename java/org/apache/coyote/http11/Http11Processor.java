@@ -258,6 +258,8 @@ public class Http11Processor extends AbstractProcessor {
         while (!getErrorState().isError() && keepAlive && !isAsync() && upgradeToken == null &&
                 sendfileState == SendfileState.DONE && !protocol.isPaused()) {
 
+            // 解析HTTP协议
+
             // Parsing the request header
             try {
                 if (!inputBuffer.parseRequestLine(keptAlive, protocol.getConnectionTimeout(),
@@ -387,6 +389,8 @@ public class Http11Processor extends AbstractProcessor {
             if (getErrorState().isIoAllowed()) {
                 try {
                     rp.setStage(org.apache.coyote.Constants.STAGE_SERVICE);
+                    // 准备好了Request Response对象通过CoyoteAdapter发送给tomcat后端组件
+                    // 层层传递到Servlet的service方法
                     getAdapter().service(request, response);
                     // Handle when the response was committed before a serious
                     // error occurred. Throwing a ServletException should both

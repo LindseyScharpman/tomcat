@@ -1276,13 +1276,15 @@ public abstract class AbstractEndpoint<S,U> {
                 sc = processorCache.pop();
             }
             if (sc == null) {
+                // 创建出exec具体的runnable对象,然后交给Exec线程池处理
                 sc = createSocketProcessor(socketWrapper, event);
             } else {
                 sc.reset(socketWrapper, event);
             }
+            // 根据Server.xml中的Executor标签配置而创建的线程池
             Executor executor = getExecutor();
             if (dispatch && executor != null) {
-                executor.execute(sc);
+                executor.execute(sc); // 执行
             } else {
                 sc.run();
             }

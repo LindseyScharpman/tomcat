@@ -256,7 +256,7 @@ public class OutputBuffer extends Writer {
         // confuse AJP (bug 50189) so close the input buffer to prevent them.
         Request req = (Request) coyoteResponse.getRequest().getNote(CoyoteAdapter.ADAPTER_NOTES);
         req.inputBuffer.close();
-
+        // 写响应
         coyoteResponse.action(ActionCode.CLOSE, null);
     }
 

@@ -90,8 +90,10 @@ public abstract class AbstractProtocol<S> implements ProtocolHandler, MBeanRegis
     private ScheduledFuture<?> monitorFuture;
 
     public AbstractProtocol(AbstractEndpoint<S, ?> endpoint) {
+        // protocol持有endpoint和connectionHandler
         this.endpoint = endpoint;
         ConnectionHandler<S> cHandler = new ConnectionHandler<>(this);
+        // endpoint和handler绑定
         getEndpoint().setHandler(cHandler);
         setHandler(cHandler);
         setConnectionLinger(Constants.DEFAULT_CONNECTION_LINGER);
@@ -838,6 +840,8 @@ public abstract class AbstractProtocol<S> implements ProtocolHandler, MBeanRegis
                 return SocketState.CLOSED;
             }
 
+            // 这个方法主要作用：将socket包转换为内部的request对象，发送给tomcat后端组件
+
             S socket = wrapper.getSocket();
 
             // We take complete ownership of the Processor inside of this method to ensure
@@ -923,6 +927,7 @@ public abstract class AbstractProtocol<S> implements ProtocolHandler, MBeanRegis
 
                 SocketState state = SocketState.CLOSED;
                 do {
+                    // 真正的处理入口
                     state = processor.process(wrapper, status);
 
                     if (state == SocketState.UPGRADING) {

@@ -979,6 +979,7 @@ public class Connector extends LifecycleMBeanBase {
             throw new LifecycleException(sm.getString("coyoteConnector.protocolHandlerInstantiationFailed"));
         }
 
+        // 将协议和CoyoteAdapter绑定
         // Initialize adapter
         adapter = new CoyoteAdapter(this);
         protocolHandler.setAdapter(adapter);

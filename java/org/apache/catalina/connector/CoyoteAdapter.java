@@ -340,6 +340,9 @@ public class CoyoteAdapter implements Adapter {
                 // check valves if we support async
                 request.setAsyncSupported(connector.getService().getContainer().getPipeline().isAsyncSupported());
                 // Calling the container
+                // tomcat前后端的分界
+                // accpetor-poller-exector(前端,http协议分析,攒足request/response)
+                // tomcat各个容器Engine Host Context Filter Servlet (后端)
                 connector.getService().getContainer().getPipeline().getFirst().invoke(request, response);
             }
             if (request.isAsync()) {
@@ -369,6 +372,8 @@ public class CoyoteAdapter implements Adapter {
                 }
             } else {
                 request.finishRequest();
+
+                // servlet阻塞返回响应
                 response.finishResponse();
             }
 

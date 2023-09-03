@@ -311,6 +311,7 @@ public class Http11OutputBuffer implements HttpOutputBuffer {
             try {
                 SocketWrapperBase<?> socketWrapper = this.socketWrapper;
                 if (socketWrapper != null) {
+                    // 阻塞写
                     socketWrapper.write(isBlocking(), headerBuffer);
                 } else {
                     throw new CloseNowException(sm.getString("iob.failedwrite"));
