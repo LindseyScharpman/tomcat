@@ -948,6 +948,7 @@ public class NioEndpoint extends AbstractJsseEndpoint<NioChannel,SocketChannel> 
                         socketWrapper.updateLastWrite();
                     }
                 } else {
+                    // 真正的文件数据拷贝到socket，0拷贝, windows 最多8M,会分多次传输
                     long written = sd.fchannel.transferTo(sd.pos, sd.length, wc);
                     if (written > 0) {
                         sd.pos += written;
@@ -1504,6 +1505,7 @@ public class NioEndpoint extends AbstractJsseEndpoint<NioChannel,SocketChannel> 
             setSendfileData((SendfileData) sendfileData);
             SelectionKey key = getSocket().getIOChannel().keyFor(getPoller().getSelector());
             // Might as well do the first write on this thread
+            // 最终由Poller来处理sendfile
             return getPoller().processSendfile(key, this, true);
         }
 

@@ -460,6 +460,7 @@ public class Http11Processor extends AbstractProcessor {
 
             rp.setStage(org.apache.coyote.Constants.STAGE_KEEPALIVE);
 
+            // 处理sendfile >48KB 文件
             sendfileState = processSendfile(socketWrapper);
         }
 
@@ -914,7 +915,7 @@ public class Http11Processor extends AbstractProcessor {
         }
 
         // Sendfile support
-        if (protocol.getUseSendfile()) {
+        if (protocol.getUseSendfile()) {  //是否使用sendfile,默认为true
             prepareSendfile(outputFilters);
         }
 
@@ -1399,6 +1400,7 @@ public class Http11Processor extends AbstractProcessor {
             } else {
                 sendfileData.keepAliveState = SendfileKeepAliveState.NONE;
             }
+            // 处理sendfile
             result = socketWrapper.processSendfile(sendfileData);
             switch (result) {
                 case ERROR:

@@ -515,6 +515,7 @@ public class DefaultServlet extends HttpServlet {
                          HttpServletResponse response)
         throws IOException, ServletException {
 
+        // 处理静态资源
         // Serve the requested resource, including the data content
         serveResource(request, response, true, fileEncoding);
 
@@ -1141,6 +1142,7 @@ public class DefaultServlet extends HttpServlet {
                                 renderResult = source;
                             }
                         } else {
+                            // 检查是否开启sendfile
                             if (!checkSendfile(request, response, resource, contentLength, null)) {
                                 // sendfile not possible so check if resource
                                 // content is available directly via
@@ -2239,7 +2241,7 @@ public class DefaultServlet extends HttpServlet {
                                   long length, Range range) {
         String canonicalPath;
         if (sendfileSize > 0
-            && length > sendfileSize
+            && length > sendfileSize // > 48Kb
             && (Boolean.TRUE.equals(request.getAttribute(Globals.SENDFILE_SUPPORTED_ATTR)))
             && (request.getClass().getName().equals("org.apache.catalina.connector.RequestFacade"))
             && (response.getClass().getName().equals("org.apache.catalina.connector.ResponseFacade"))
