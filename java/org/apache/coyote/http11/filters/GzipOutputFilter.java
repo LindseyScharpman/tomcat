@@ -62,6 +62,10 @@ public class GzipOutputFilter implements OutputFilter {
     @Override
     public int doWrite(ByteBuffer chunk) throws IOException {
         if (compressionStream == null) {
+            // 添加GZIPOutputStream,实现压缩
+            // 压缩内容,需要到用户空间来进行压缩
+            // 而sendfile是在内核态直接进行数据传输,因此无法使用压缩
+            // 进而sendfile和压缩是互斥的,要么开启sendfile要么开启压缩
             compressionStream = new GZIPOutputStream(fakeOutputStream, true);
         }
         int len = chunk.remaining();

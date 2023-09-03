@@ -248,6 +248,7 @@ public class CompressionConfig {
                 return false;
             }
 
+            // 不支持图片压缩
             // Check for compatible MIME-TYPE
             String[] compressibleMimeTypes = getCompressibleMimeTypes();
             if (compressibleMimeTypes != null &&
@@ -284,6 +285,7 @@ public class CompressionConfig {
                 return false;
             }
 
+            // 找到gzip
             for (AcceptEncoding acceptEncoding : acceptEncodings) {
                 if ("gzip".equalsIgnoreCase(acceptEncoding.getEncoding())) {
                     foundGzip = true;
@@ -315,6 +317,11 @@ public class CompressionConfig {
 
         // Compressed content length is unknown so mark it as such.
         response.setContentLength(-1);
+
+        // 设置gzip
+        // Content-Encoding 表示响应主体（response body）使用了什么压缩算法，例如 gzip、deflate、br 等。
+        // 浏览器在接收到这个头部字段时，会自动对响应主体进行解压缩操作，然后再进行处理或者显示。
+        // 通常 Content-Encoding 只适用于响应数据，而不适用于请求数据。
         // Configure the content encoding for compressed content
         responseHeaders.setValue("Content-Encoding").setString("gzip");
 

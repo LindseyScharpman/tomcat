@@ -919,6 +919,8 @@ public class Http11Processor extends AbstractProcessor {
             prepareSendfile(outputFilters);
         }
 
+        // sendfile和compression是冲突的
+        // 检查是否压缩,若开启,则GzipOutputFilter生效,则GzipOutputFilter中会加入GzipOutputStream
         // Check for compression
         boolean useCompression = false;
         if (entityBody && sendfileData == null) {
@@ -961,6 +963,7 @@ public class Http11Processor extends AbstractProcessor {
             }
         }
 
+        // 使用压缩,则把GzipOutputFilter放进来
         if (useCompression) {
             outputBuffer.addActiveFilter(outputFilters[Constants.GZIP_FILTER]);
         }
