@@ -998,11 +998,12 @@ public abstract class AbstractProtocol<S> implements ProtocolHandler, MBeanRegis
                         getProtocol().addWaitingProcessor(processor);
                     }
                 } else if (state == SocketState.OPEN) {
+                    // 处理完了还是keepAlive状态,回收利用工作线程,继续放入poller进入下次轮询
                     // In keep-alive but between requests. OK to recycle
                     // processor. Continue to poll for the next request.
                     release(processor);
                     processor = null;
-                    wrapper.registerReadInterest();
+                    wrapper.registerReadInterest(); // 继续注册读事件
                 } else if (state == SocketState.SENDFILE) {
                     // Sendfile in progress. If it fails, the socket will be
                     // closed. If it works, the socket either be added to the

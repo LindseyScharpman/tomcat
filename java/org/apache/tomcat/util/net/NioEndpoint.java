@@ -1481,6 +1481,8 @@ public class NioEndpoint extends AbstractJsseEndpoint<NioChannel,SocketChannel> 
             if (log.isDebugEnabled()) {
                 log.debug(sm.getString("endpoint.debug.registerRead", this));
             }
+
+            // 下次轮询 继续参与
             getPoller().add(this, SelectionKey.OP_READ);
         }
 
@@ -1806,9 +1808,9 @@ public class NioEndpoint extends AbstractJsseEndpoint<NioChannel,SocketChannel> 
                     getHandler().process(socketWrapper, SocketEvent.CONNECT_FAIL);
                     poller.cancelledKey(getSelectionKey(), socketWrapper);
                 } else if (handshake == SelectionKey.OP_READ){
-                    socketWrapper.registerReadInterest();
+                    socketWrapper.registerReadInterest(); // 继续读
                 } else if (handshake == SelectionKey.OP_WRITE){
-                    socketWrapper.registerWriteInterest();
+                    socketWrapper.registerWriteInterest(); // 继续写
                 }
             } catch (CancelledKeyException cx) {
                 poller.cancelledKey(getSelectionKey(), socketWrapper);
@@ -1822,7 +1824,7 @@ public class NioEndpoint extends AbstractJsseEndpoint<NioChannel,SocketChannel> 
                 event = null;
                 //return to cache
                 if (running && processorCache != null) {
-                    processorCache.push(this);
+                    processorCache.push(this); // 缓存起来,可重复利用
                 }
             }
         }

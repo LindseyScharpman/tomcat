@@ -249,7 +249,7 @@ public class Http11Processor extends AbstractProcessor {
         setSocketWrapper(socketWrapper);
 
         // Flags
-        keepAlive = true;
+        keepAlive = true; //默认开启
         openSocket = false;
         readComplete = true;
         boolean keptAlive = false;
@@ -263,6 +263,9 @@ public class Http11Processor extends AbstractProcessor {
             // Parsing the request header
             try {
                 if (!inputBuffer.parseRequestLine(keptAlive, protocol.getConnectionTimeout(),
+                        // 默认20秒 keepAlive
+                    // keepAliveTimeout：表示在下次请求过来之前，tomcat保持该连接多久
+                    // 若客户端不断有请求过来，且没有超过过期时间，则该连接将一直保持,直到超过maxKeepAliveRequest
                         protocol.getKeepAliveTimeout())) {
                     if (inputBuffer.getParsingRequestLinePhase() == -1) {
                         return SocketState.UPGRADING;
@@ -378,6 +381,8 @@ public class Http11Processor extends AbstractProcessor {
                 }
             }
 
+            // maxKeepAliveRequests参数设置为1,则禁用keepAlive
+            // 若达到了最大请求,则禁用keepAlive
             int maxKeepAliveRequests = protocol.getMaxKeepAliveRequests();
             if (maxKeepAliveRequests == 1) {
                 keepAlive = false;
@@ -458,6 +463,7 @@ public class Http11Processor extends AbstractProcessor {
                 }
             }
 
+            // 若一切正常,则当前request为STAGE_KEEPALIVE状态,这里keepAlive为true
             rp.setStage(org.apache.coyote.Constants.STAGE_KEEPALIVE);
 
             // 处理sendfile >48KB 文件
@@ -473,11 +479,13 @@ public class Http11Processor extends AbstractProcessor {
         } else if (isUpgrade()) {
             return SocketState.UPGRADING;
         } else {
+            // open状态表示该socket继续使用sendfil或保持keepAlive
             if (sendfileState == SendfileState.PENDING) {
                 return SocketState.SENDFILE;
             } else {
                 if (openSocket) {
                     if (readComplete) {
+                        // 读完毕,仍然打开这个Socket,用于keepAlive
                         return SocketState.OPEN;
                     } else {
                         return SocketState.LONG;
