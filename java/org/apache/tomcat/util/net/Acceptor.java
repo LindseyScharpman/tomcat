@@ -113,6 +113,7 @@ public class Acceptor<U> implements Runnable {
                 state = AcceptorState.RUNNING;
 
                 try {
+                    // 最大连接数
                     //if we have reached max connections, wait
                     endpoint.countUpOrAwaitConnection();
 
@@ -130,7 +131,7 @@ public class Acceptor<U> implements Runnable {
                         socket = endpoint.serverSocketAccept();
                     } catch (Exception ioe) {
                         // We didn't get a socket
-                        endpoint.countDownConnection();
+                        endpoint.countDownConnection(); // 最大连接统计-1
                         if (endpoint.isRunning()) {
                             // Introduce delay if necessary
                             errorDelay = handleExceptionWithDelay(errorDelay);
