@@ -16,6 +16,7 @@
  */
 package org.apache.tomcat.util.res;
 
+import java.nio.charset.StandardCharsets;
 import java.text.MessageFormat;
 import java.util.Enumeration;
 import java.util.HashMap;
@@ -41,7 +42,6 @@ import java.util.ResourceBundle;
  * @author James Duncan Davidson [duncan@eng.sun.com]
  * @author James Todd [gonzo@eng.sun.com]
  * @author Mel Martinez [mmartinez@g1440.com]
- *
  * @see java.util.ResourceBundle
  */
 public class StringManager {
@@ -105,9 +105,7 @@ public class StringManager {
      * Get a string from the underlying resource bundle or return null if the String is not found.
      *
      * @param key to desired resource String
-     *
      * @return resource String matching <i>key</i> from underlying bundle or null if not found.
-     *
      * @throws IllegalArgumentException if <i>key</i> is null
      */
     public String getString(String key) {
@@ -122,6 +120,7 @@ public class StringManager {
             // Avoid NPE if bundle is null and treat it like an MRE
             if (bundle != null) {
                 str = bundle.getString(key);
+                str = new String(str.getBytes(StandardCharsets.ISO_8859_1), StandardCharsets.UTF_8);
             }
         } catch (MissingResourceException mre) {
             // bad: shouldn't mask an exception the following way:
@@ -147,7 +146,6 @@ public class StringManager {
      *
      * @param key  The key for the required message
      * @param args The values to insert into the message
-     *
      * @return The request string formatted with the provided arguments or the key if the key was not found.
      */
     public String getString(final String key, final Object... args) {
@@ -185,7 +183,6 @@ public class StringManager {
      * created and returned.
      *
      * @param clazz The class for which to retrieve the StringManager
-     *
      * @return The instance associated with the package of the provide class
      */
     public static final StringManager getManager(Class<?> clazz) {
@@ -198,7 +195,6 @@ public class StringManager {
      * else a new StringManager will be created and returned.
      *
      * @param packageName The package name
-     *
      * @return The instance associated with the given package and the default Locale
      */
     public static final StringManager getManager(String packageName) {
@@ -212,7 +208,6 @@ public class StringManager {
      *
      * @param packageName The package name
      * @param locale      The Locale
-     *
      * @return The instance associated with the given package and Locale
      */
     public static final synchronized StringManager getManager(String packageName, Locale locale) {
@@ -252,7 +247,6 @@ public class StringManager {
      *
      * @param packageName      The package for which the StringManager was requested
      * @param requestedLocales The list of Locales
-     *
      * @return the found StringManager or the default StringManager
      */
     public static StringManager getManager(String packageName, Enumeration<Locale> requestedLocales) {
